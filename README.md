@@ -84,14 +84,15 @@ This project demonstrates a modern DevOps workflow implementing:
 - ✅ Horizontal Pod Autoscaling (HPA)
 - ✅ ArgoCD GitOps deployment
 - ✅ Automated CI/CD with GitHub Actions
-- ✅ GitFlow workflow enforcement
+- ✅ GitFlow workflow enforcement with Git hooks
 - ✅ Automated testing and code coverage
 - ✅ Container image signing and attestation
+- ✅ GitHub Copilot integration in Git hooks
 
 ## 📦 Prerequisites
 
 - **Python 3.11+**
-- **Docker** (for containerization)
+- **Docker Engine** (for containerization)
 - **kubectl** (for Kubernetes)
 - **Helm** (for Kubernetes package management)
 - **uv** (Python package manager)
@@ -106,12 +107,20 @@ chmod +x scripts/init.sh
 ./scripts/init.sh
 ```
 
+### Git Hooks Setup
+
+Configure Git hooks for GitFlow enforcement:
+
+```bash
+chmod +x .githooks/setup.sh
+./.githooks/setup.sh
+```
+
 Or install tools individually:
 
 ```bash
 chmod +x scripts/*.sh
 ./scripts/install-uv.sh
-./scripts/install-docker.sh
 ./scripts/install-kubectl.sh
 ./scripts/install-helm.sh
 ./scripts/install-k9s.sh
@@ -196,6 +205,12 @@ DevOps-Demo-Project/
 │   ├── install-kubectl.sh
 │   ├── install-helm.sh
 │   └── install-k9s.sh
+├── .githooks/                # Git hooks for GitFlow
+│   ├── pre-commit           # Branch protection & checks
+│   ├── commit-msg           # Commit message validation
+│   ├── pre-push             # Branch naming validation
+│   ├── setup.sh             # Hooks installation script
+│   └── README.md            # Hooks documentation
 ├── .github/                  # GitHub Actions
 │   └── workflows/
 │       ├── ci.yml           # Continuous Integration
@@ -371,10 +386,13 @@ Automated release workflow:
 
 ## 📚 Documentation
 
+- [Git Hooks Guide](.githooks/README.md) - 🎣 GitFlow enforcement with Copilot
 - [ArgoCD Setup](argocd/README.md)
 - [Helm Charts](helm/devops-demo/README.md)
 - [API Documentation](docs/API.md)
 - [Deployment Guide](docs/DEPLOYMENT.md)
+- [GitFlow Workflow](docs/GITFLOW.md)
+- [GitHub Copilot Resources](.github/COPILOT_README.md) - 🤖 AI-powered development assistance
 
 ## 🔗 API Endpoints
 

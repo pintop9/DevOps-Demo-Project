@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+#
+# Git Hook: pre-push
+# Enforces GitFlow branch naming conventions
+# 
+# Valid branch name formats:
+#   - main
+#   - develop
+#   - feature/<description>
+#   - bugfix/<description>
+#   - release/<version>
+#   - hotfix/<description>
+#
+# Installation:
+#   git config core.hooksPath .githooks
+#
+
+set -e
+
+# ANSI color codes
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+BOLD='\033[1m'
+
+# Get current branch name
+current_branch=$(git symbolic-ref --short HEAD 2>/dev/null || echo "")
+
+# If we can't get branch name (detached HEAD), allow push
+if [ -z "$current_branch" ]; then
+    echo -e "${YELLOW}⚠️  Warning: Detached HEAD state detected${NC}"
+    exit 0
+fi
+
+echo -e "${BLUE}🔍 Validating branch name: ${BOLD}$current_branch${NC}"
+
+# GitFlow branch name validation
+validate_branch_name() {
+    local branch=$1
+    
+    # Valid branch patterns according to GitFlow
+    local valid_patterns=(
+        "^main$"
+        "^copilot$"
+        "^develop$"
+        "^feature/[a-z0-9._-]+$"
+        "^bugfix/[a-z0-9._-]+$"
+        "^release/[0-9]+\.[0-9]+\.[0-9]+$"
+        "^hotfix/[a-z0-9._-]+$"
+    )
+    
+    # Check if branch matches any valid pattern
+    for pattern in "${valid_patterns[@]}"; do
+        if [[ $branch =~ $pattern ]]; then
+            return 0
+        fi
+    done
+    
+    return 1
+}
+
+# Validate the branch name
+if validate_branch_name "$current_branch"; then
+    echo -e "${GREEN}✅ Branch name is valid according to GitFlow conventions${NC}"
+    exit 0
+else
+    echo -e "${RED}${BOLD}❌ Invalid branch name: $current_branch${NC}\n"
+    
+    echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BOLD}GitFlow Branch Naming Conventions:${NC}\n"
+    
+    echo -e "${CYAN}📋 Valid branch formats:${NC}"
+    echo -e "  ${GREEN}main${NC}                    - Production-ready code"
+    echo -e "  ${GREEN}develop${NC}                 - Integration branch"
+    echo -e "  ${GREEN}feature/<name>${NC}          - New features (e.g., feature/user-auth)"
+    echo -e "  ${GREEN}bugfix/<name>${NC}           - Bug fixes (e.g., bugfix/fix-login)"
+    echo -e "  ${GREEN}release/<version>${NC}       - Release preparation (e.g., release/1.2.0)"
+    echo -e "  ${GREEN}hotfix/<name>${NC}           - Critical production fixes (e.g., hotfix/security-patch)"
+    
+    echo -e "\n${PURPLE}💡 Naming guidelines:${NC}"
+    echo -e "  • Use lowercase letters, numbers, hyphens, underscores, and dots"
+    echo -e "  • Use descriptive names (e.g., feature/api-authentication)"
+    echo -e "  • Version format: MAJOR.MINOR.PATCH (e.g., release/2.1.0)"
+    echo -e "  • Keep names concise but meaningful"
+    
+    echo -e "\n${CYAN}🔧 To fix this:${NC}"
+    
+    # Provide intelligent suggestions based on current branch name
+    if [[ $current_branch =~ ^[Ff]eature ]]; then
+        suggested_name=$(echo "$current_branch" | sed -E 's/^[Ff]eature[-_/]*/feature\//' | tr '[:upper:]' '[:lower:]')
+        echo -e "  ${YELLOW}Did you mean?${NC} ${GREEN}$suggested_name${NC}"
+        echo -e "  Run: ${BOLD}git branch -m $suggested_name${NC}"
+    elif [[ $current_branch =~ ^[Bb]ugfix ]]; then
+        suggested_name=$(echo "$current_branch" | sed -E 's/^[Bb]ugfix[-_/]*/bugfix\//' | tr '[:upper:]' '[:lower:]')
+        echo -e "  ${YELLOW}Did you mean?${NC} ${GREEN}$suggested_name${NC}"
+        echo -e "  Run: ${BOLD}git branch -m $suggested_name${NC}"
+    elif [[ $current_branch =~ ^[Hh]otfix ]]; then
+        suggested_name=$(echo "$current_branch" | sed -E 's/^[Hh]otfix[-_/]*/hotfix\//' | tr '[:upper:]' '[:lower:]')
+        echo -e "  ${YELLOW}Did you mean?${NC} ${GREEN}$suggested_name${NC}"
+        echo -e "  Run: ${BOLD}git branch -m $suggested_name${NC}"
+    elif [[ $current_branch =~ ^[Rr]elease ]]; then
+        echo -e "  ${YELLOW}Release branches must use semantic versioning:${NC}"
+        echo -e "  Example: ${BOLD}git branch -m release/1.0.0${NC}"
+    else
+        echo -e "  1. Rename your branch to follow GitFlow conventions:"
+        echo -e "     ${BOLD}git branch -m feature/<descriptive-name>${NC}"
+        echo -e "  2. Or push to a new branch with a valid name:"
+        echo -e "     ${BOLD}git push origin HEAD:feature/<descriptive-name>${NC}"
+    fi
+    
+    echo -e "\n${CYAN}🤖 GitHub Copilot Tip:${NC}"
+    echo -e "  Ask: ${ITALIC}'Help me rename this branch to follow GitFlow'${NC}"
+    echo -e "  Or:  ${ITALIC}'What's the best GitFlow branch name for adding user authentication?'${NC}"
+    
+    echo -e "\n${YELLOW}📚 Learn more:${NC}"
+    echo -e "  See: ${BOLD}docs/GITFLOW.md${NC} for complete documentation"
+    
+    echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+    
+    echo -e "${RED}Push rejected. Please rename your branch and try again.${NC}\n"
+    
+    exit 1
+fi

@@ -54,7 +54,7 @@ check_requirements() {
 install_devops_tools() {
     log_section "Installing DevOps Tools"
     
-    read -p "Do you want to install kubectl, helm, k9s, uv, Docker, and ArgoCD CLI? (y/N): " -n 1 -r
+    read -p "Do you want to install all DevOps tools (uv, Docker, kubectl, helm, k9s, ArgoCD CLI)? (y/N): " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         log_warn "Skipping DevOps tools installation"
@@ -84,15 +84,11 @@ install_devops_tools() {
     log_info "Installing k9s..."
     "$SCRIPT_DIR/install-k9s.sh"
     
-    # Install ArgoCD CLI (optional)
-    read -p "Do you want to install ArgoCD CLI? (y/N): " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        log_info "Installing ArgoCD CLI..."
-        "$SCRIPT_DIR/install-argocd.sh"
-    fi
+    # Install ArgoCD CLI
+    log_info "Installing ArgoCD CLI..."
+    "$SCRIPT_DIR/install-argocd.sh"
     
-    log_info "✅ DevOps tools installed"
+    log_info "✅ All DevOps tools installed"
 }
 
 # Setup Python environment
@@ -101,24 +97,14 @@ setup_python_env() {
     
     # Check if uv is available
     if ! command -v uv &> /dev/null; then
-        log_warn "uv not found. Attempting to use pip instead..."
-        
-        # Create virtual environment with standard tools
-        if ! command -v python3 &> /dev/null; then
-            log_error "Python 3 is required but not found"
-            exit 1
-        fi
-        
-        python3 -m venv .venv
-        source .venv/bin/activate
-        pip install --upgrade pip
-        pip install -e ".[dev]"
-    else
-        log_info "Creating Python virtual environment with uv..."
-        uv venv
-        source .venv/bin/activate
-        uv pip install -e ".[dev]"
+        log_error "uv is required but not found. Please run ./scripts/install-uv.sh first"
+        exit 1
     fi
+    
+    log_info "Creating Python virtual environment with uv..."
+    uv venv
+    source .venv/bin/activate
+    uv pip install -e ".[dev]"
     
     log_info "✅ Python environment ready"
 }

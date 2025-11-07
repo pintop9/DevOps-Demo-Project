@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ###############################################################################
-# Install Docker - Container runtime platform
+# Install Docker Engine - Container runtime platform
 # Supports: macOS, Linux (Ubuntu/Debian, RHEL/CentOS/Fedora, Arch)
 ###############################################################################
 
@@ -37,41 +37,38 @@ OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 log_info "Detected OS: $OS"
 
 ###############################################################################
-# macOS Installation
+# macOS Installation (Docker Engine)
 ###############################################################################
 install_docker_macos() {
-    log_step "Installing Docker Desktop for macOS..."
+    log_step "Installing Docker Engine for macOS..."
     
     # Check for Homebrew
-    if command -v brew &> /dev/null; then
-        log_info "Installing Docker Desktop via Homebrew..."
-        brew install --cask docker
-        
-        log_info "✅ Docker Desktop installed via Homebrew!"
-        log_warn ""
-        log_warn "⚠️  IMPORTANT: Docker Desktop needs to be started manually"
-        log_warn "    1. Open Docker Desktop from Applications"
-        log_warn "    2. Complete the setup wizard"
-        log_warn "    3. Wait for Docker to start (whale icon in menu bar)"
-        log_warn ""
-        
-    else
-        log_warn "Homebrew not found. Installing via download..."
-        log_info ""
-        log_info "Please follow these steps to install Docker Desktop:"
-        log_info "  1. Visit: https://www.docker.com/products/docker-desktop/"
-        log_info "  2. Download Docker Desktop for Mac (Intel or Apple Silicon)"
-        log_info "  3. Open the .dmg file and drag Docker to Applications"
-        log_info "  4. Launch Docker Desktop from Applications"
-        log_info "  5. Complete the setup wizard"
-        log_info ""
-        
-        read -p "Press Enter when Docker Desktop is installed and running..."
+    if ! command -v brew &> /dev/null; then
+        log_error "Homebrew is required for Docker installation on macOS"
+        log_info "Please install Homebrew first: https://brew.sh/"
+        exit 1
     fi
+    
+    log_info "Installing Docker Engine via Homebrew..."
+    
+    # Install Docker Engine
+    brew install docker docker-compose docker-buildx
+    
+    # Install Docker completion
+    brew install docker-completion
+    
+    log_info "✅ Docker Engine installed successfully!"
+    log_warn ""
+    log_warn "⚠️  IMPORTANT: Docker Engine on macOS requires Docker Desktop or a VM"
+    log_warn "    For full functionality, consider installing Docker Desktop:"
+    log_warn "    https://www.docker.com/products/docker-desktop/"
+    log_warn ""
+    log_warn "    Or use a container runtime like Colima, Rancher Desktop, or Podman"
+    log_warn ""
 }
 
 ###############################################################################
-# Linux Installation
+# Linux Installation (Docker Engine)
 ###############################################################################
 install_docker_linux() {
     log_step "Installing Docker Engine for Linux..."
@@ -215,50 +212,79 @@ esac
 # Verify installation
 log_step "Verifying Docker installation..."
 
-# Wait for Docker to be ready (especially on macOS)
-MAX_RETRIES=30
-RETRY_COUNT=0
-while ! docker info &> /dev/null; do
-    if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
-        log_error "Docker is not responding. Please ensure Docker is running."
-        log_info "For macOS: Launch Docker Desktop from Applications"
-        log_info "For Linux: Run 'sudo systemctl start docker'"
-        exit 1
-    fi
-    log_info "Waiting for Docker to start... ($RETRY_COUNT/$MAX_RETRIES)"
-    sleep 2
-    RETRY_COUNT=$((RETRY_COUNT + 1))
-done
+case $OS in
+    darwin)
+        # On macOS, Docker Engine requires Docker Desktop or a container runtime
+        if docker --version &> /dev/null; then
+            INSTALLED_VERSION=$(docker --version | awk '{print $3}' | sed 's/,//')
+            log_info "✅ Docker Engine installed successfully!"
+            log_info "Version: $INSTALLED_VERSION"
+            log_info "Location: $(which docker)"
+            log_warn ""
+            log_warn "⚠️  NOTE: Docker Engine on macOS requires a container runtime"
+            log_warn "    Start Docker Desktop or run: brew services start docker"
+            log_warn ""
+        else
+            log_error "Docker installation verification failed"
+            log_info "You may need to install Docker Desktop or a container runtime like Colima"
+            exit 1
+        fi
+        ;;
+    linux)
+        # Wait for Docker to be ready on Linux
+        MAX_RETRIES=30
+        RETRY_COUNT=0
+        while ! docker info &> /dev/null; do
+            if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
+                log_error "Docker is not responding. Please ensure Docker is running."
+                log_info "Run: sudo systemctl start docker"
+                exit 1
+            fi
+            log_info "Waiting for Docker to start... ($RETRY_COUNT/$MAX_RETRIES)"
+            sleep 2
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+        done
 
-if docker --version &> /dev/null; then
-    INSTALLED_VERSION=$(docker --version | awk '{print $3}' | sed 's/,//')
-    log_info "✅ Docker successfully installed and running!"
-    log_info "Version: $INSTALLED_VERSION"
-    log_info "Location: $(which docker)"
-    
-    # Test Docker with hello-world
-    log_step "Testing Docker installation..."
-    if docker run --rm hello-world &> /dev/null; then
-        log_info "✅ Docker test successful!"
-    else
-        log_warn "Docker is installed but test failed. You may need to restart or check permissions."
-    fi
-    
-    # Show Docker Compose version
-    if docker compose version &> /dev/null; then
-        COMPOSE_VERSION=$(docker compose version --short)
-        log_info "Docker Compose version: $COMPOSE_VERSION"
-    fi
-else
-    log_error "Installation verification failed. Docker not found in PATH"
-    exit 1
-fi
+        if docker --version &> /dev/null; then
+            INSTALLED_VERSION=$(docker --version | awk '{print $3}' | sed 's/,//')
+            log_info "✅ Docker successfully installed and running!"
+            log_info "Version: $INSTALLED_VERSION"
+            log_info "Location: $(which docker)"
+            
+            # Test Docker with hello-world
+            log_step "Testing Docker installation..."
+            if docker run --rm hello-world &> /dev/null; then
+                log_info "✅ Docker test successful!"
+            else
+                log_warn "Docker is installed but test failed. You may need to restart or check permissions."
+            fi
+            
+            # Show Docker Compose version
+            if docker compose version &> /dev/null; then
+                COMPOSE_VERSION=$(docker compose version --short)
+                log_info "Docker Compose version: $COMPOSE_VERSION"
+            fi
+        else
+            log_error "Installation verification failed. Docker not found in PATH"
+            exit 1
+        fi
+        ;;
+esac
 
 log_info ""
 log_info "🎉 Installation complete!"
 log_info ""
 log_info "Next steps:"
-log_info "  • Test Docker: docker run hello-world"
+case $OS in
+    darwin)
+        log_info "  • Start Docker: brew services start docker"
+        log_info "  • Or install Docker Desktop for full functionality"
+        log_info "  • Test Docker: docker run hello-world"
+        ;;
+    linux)
+        log_info "  • Test Docker: docker run hello-world"
+        ;;
+esac
 log_info "  • Build an image: docker build -t myapp ."
 log_info "  • Run a container: docker run -p 8080:8080 myapp"
 log_info "  • Use Docker Compose: docker compose up"

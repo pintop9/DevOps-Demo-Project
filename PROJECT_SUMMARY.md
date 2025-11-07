@@ -68,7 +68,8 @@ DevOps-Demo-Project/
 
 ## 🎯 Features Implemented
 
-### Application Features ✅
+### Application Features
+
 - ✅ Flask REST API with multiple endpoints
 - ✅ Health check endpoints (`/health`, `/ready`)
 - ✅ Application info endpoint (`/api/info`)
@@ -77,7 +78,8 @@ DevOps-Demo-Project/
 - ✅ Structured logging
 - ✅ Environment-based configuration
 
-### DevOps Features ✅
+### DevOps Features
+
 - ✅ Multi-stage Docker builds (optimized for size)
 - ✅ Multi-platform support (amd64, arm64)
 - ✅ Kubernetes-ready Helm charts
@@ -90,7 +92,8 @@ DevOps-Demo-Project/
 - ✅ Container image signing & attestation
 - ✅ Deployment to GitHub Container Registry
 
-### Testing & Quality ✅
+### Testing & Quality 
+
 - ✅ Unit tests with pytest
 - ✅ Code coverage reports
 - ✅ Linting with flake8
@@ -98,8 +101,9 @@ DevOps-Demo-Project/
 - ✅ Pre-commit hooks
 - ✅ Automated CI checks
 
-### Documentation ✅
-- ✅ Comprehensive README
+### Documentation
+
+- ✅ Comprehensive `README.md`
 - ✅ API documentation
 - ✅ Deployment guide
 - ✅ GitFlow branching guide
@@ -109,9 +113,10 @@ DevOps-Demo-Project/
 ## 🚀 Quick Start Commands
 
 ### 1. Initialize the Project
-```bash
-./scripts/init.sh
-```
+  
+  ```bash
+  ./scripts/init.sh
+  ```
 
 This will:
 - Install DevOps tools (kubectl, helm, k9s, uv)
@@ -122,6 +127,9 @@ This will:
 
 ### 2. Run Locally
 ```bash
+# Create virtual environment
+uv venv
+
 # Activate virtual environment
 source .venv/bin/activate
 
@@ -156,7 +164,13 @@ kubectl apply -f argocd/application.yaml
 
 ### 5. Run Tests
 ```bash
+# Create virtual environment if not exists
+uv venv
+
+# Activate virtual environment
 source .venv/bin/activate
+
+# Run tests
 pytest tests/ -v --cov=app
 ```
 
@@ -325,30 +339,35 @@ All documentation is organized and comprehensive:
 ## 🎉 Project Highlights
 
 ### Modern DevOps Practices
-✅ Infrastructure as Code (Helm charts)
-✅ GitOps with ArgoCD
-✅ Automated CI/CD pipelines
-✅ Container security (non-root, read-only FS)
-✅ Multi-platform builds
-✅ Semantic versioning
-✅ Conventional commits
+
+✅ Infrastructure as Code (Helm charts)  
+✅ GitOps with ArgoCD  
+✅ Automated CI/CD pipelines with GitHub Actions  
+✅ GitFlow branching model  
+✅ Automated testing and code quality checks  
+✅ Container security (non-root, read-only FS)  
+✅ Multi-platform builds  
+✅ Semantic versioning  
+✅ Conventional commits  
 
 ### Production-Ready Features
-✅ Health checks for Kubernetes
-✅ Horizontal Pod Autoscaling
-✅ Resource limits and requests
-✅ Pod anti-affinity rules
-✅ Readiness and liveness probes
-✅ Structured logging
-✅ Error handling
+
+✅ Health checks for Kubernetes  
+✅ Horizontal Pod Autoscaling  
+✅ Resource limits and requests  
+✅ Pod anti-affinity rules  
+✅ Readiness and liveness probes  
+✅ Structured logging  
+✅ Error handling  
 
 ### Developer Experience
-✅ One-command setup (`./scripts/init.sh`)
-✅ Automated tool installation
-✅ Pre-commit hooks
-✅ Comprehensive documentation
-✅ Example workflows
-✅ Custom instructions for AI assistants
+
+✅ One-command setup (`./scripts/init.sh`)  
+✅ Automated tool installation  
+✅ Pre-commit hooks  
+✅ Comprehensive documentation  
+✅ Example workflows  
+✅ Custom instructions for AI assistants  
 
 ## 🤝 Contributing
 
@@ -361,6 +380,7 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file for
 ## 🎓 Learning Resources
 
 This project demonstrates:
+
 - Python Flask application development
 - Docker containerization best practices
 - Kubernetes deployment patterns

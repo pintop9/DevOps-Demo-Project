@@ -19,10 +19,11 @@ jobs:
           echo "Target branch: $BASE_BRANCH"
           
           # Validate GitFlow branch naming
-          if [[ "$BRANCH_NAME" =~ ^(feature|bugfix|hotfix|release)/.+ ]] || [[ "$BRANCH_NAME" == "develop" ]] || [[ "$BRANCH_NAME" == "main" ]]; then
+          if [[ "$BRANCH_NAME" =~ ^(feature|bugfix|hotfix|release|copilot)/.+ ]] || [[ "$BRANCH_NAME" == "develop" ]] || [[ "$BRANCH_NAME" == "main" ]]; then
             echo "✅ Valid GitFlow branch name"
           else
             echo "❌ Invalid branch name. Must follow GitFlow convention:"
+            echo "  - copilot/xxx"
             echo "  - feature/xxx"
             echo "  - bugfix/xxx"
             echo "  - hotfix/xxx"
