@@ -78,7 +78,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+        
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PAT }}
+           
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       
@@ -90,7 +97,7 @@ jobs:
         with:
           context: .
           file: ./docker/Dockerfile
-          push: false
+          push: true
           platforms: ${{ matrix.platform }}
           tags: devops-demo:test-${{ matrix.platform }}
           cache-from: type=gha
