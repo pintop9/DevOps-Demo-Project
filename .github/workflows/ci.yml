@@ -70,7 +70,6 @@ jobs:
     needs: test
     permissions:
       contents: read
-      packages: write
       actions: write
     strategy:
       matrix:
@@ -98,7 +97,7 @@ jobs:
         with:
           context: .
           file: ./docker/Dockerfile
-          push: true
+          load: true
           platforms: ${{ matrix.arch }}
           tags: ghcr.io/${{ github.repository_owner }}/devops-demo:test-${{ matrix.arch }}
           cache-from: type=gha
