@@ -44,7 +44,7 @@ jobs:
             
             **Note**: Merging this PR will automatically create a new release and deploy to production.
           pr_label: "release"
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GHCR_PAT }}
   
   tag-and-release:
     name: Tag and Create Release
@@ -71,7 +71,7 @@ jobs:
           git tag -a "v${{ steps.version.outputs.version }}" -m "Release v${{ steps.version.outputs.version }}"
           git push origin "v${{ steps.version.outputs.version }}"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GHCR_PAT }}
       
       - name: Merge main back to develop
         run: |
@@ -79,4 +79,4 @@ jobs:
           git merge main --no-ff -m "Merge release v${{ steps.version.outputs.version }} into develop"
           git push origin develop
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GHCR_PAT }}
