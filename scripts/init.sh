@@ -100,7 +100,7 @@ setup_python_env() {
     
     log_info "Creating Python virtual environment with uv..."
     uv venv
-    source .venv/bin/activate
+    source .venv/Scripts/activate
     uv pip install -e ".[dev]"
     
     log_info "✅ Python environment ready"
@@ -111,7 +111,7 @@ run_tests() {
     log_section "Running Tests"
     
     if [[ -d ".venv" ]]; then
-        source .venv/bin/activate
+        source .venv/Scripts/activate
         log_info "Running pytest..."
         pytest tests/ -v --cov=app --cov-report=term
         log_info "✅ Tests passed"
@@ -137,7 +137,7 @@ show_next_steps() {
     echo -e "${YELLOW}Next Steps:${NC}"
     echo ""
     echo -e "1. ${BLUE}Activate the Python environment:${NC}"
-    echo "   source .venv/bin/activate"
+    echo "   source .venv/Scripts/activate"
     echo ""
     echo -e "2. ${BLUE}Run the application locally:${NC}"
     echo "   python app/main.py"
