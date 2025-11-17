@@ -70,10 +70,11 @@ jobs:
     needs: test
     permissions:
       contents: read
+      packages: write
       actions: write
     strategy:
       matrix:
-        platform: [amd64, arm64]
+        arch: [amd64, arm64]
     
     steps:
       - name: Checkout code
@@ -98,8 +99,8 @@ jobs:
           context: .
           file: ./docker/Dockerfile
           push: true
-          platforms: ${{ matrix.platform }}
-          tags: devops-demo:test-${{ matrix.platform }}
+          platforms: ${{ matrix.arch }}
+          tags: ghcr.io/${{ github.repository_owner }}devops-demo:test-${{ matrix.arch }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
   
