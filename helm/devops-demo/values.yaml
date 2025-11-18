@@ -2,7 +2,7 @@
 replicaCount: 2
 
 image:
-  repository: ghcr.io/nirgeier/devops-demo-project
+  repository: ghcr.io/pintop9/devops-demo-project
   pullPolicy: IfNotPresent
   tag: "latest"
 

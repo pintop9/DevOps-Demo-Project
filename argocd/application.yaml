@@ -9,7 +9,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/nirgeier/DevOps-Demo-Project.git
+    repoURL: https://github.com/pintop9/DevOps-Demo-Project.git
     targetRevision: main
     path: helm/devops-demo
     helm:
