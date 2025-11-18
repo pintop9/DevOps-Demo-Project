@@ -45,9 +45,19 @@ spec:
           {{- toYaml .Values.resources | nindent 12 }}
         env:
           {{- toYaml .Values.env | nindent 12 }}
+        {{- if .Values.tmp.enabled }}
+        volumeMounts:
+          - name: tmp
+            mountPath: {{ .Values.tmp.mountPath | quote }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.tmp.enabled }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
       {{- end }}
       {{- with .Values.affinity }}
       affinity:

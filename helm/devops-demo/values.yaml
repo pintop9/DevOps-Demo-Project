@@ -104,6 +104,10 @@ affinity:
                   - devops-demo
           topologyKey: kubernetes.io/hostname
 
+tmp:
+  enabled: true
+  mountPath: /tmp
+
 env:
   - name: APP_VERSION
     value: "1.0.0"
@@ -112,4 +116,4 @@ env:
   - name: PORT
     value: "8080"
   - name: TMPDIR
-    value: /app
+    value: "/tmp"
