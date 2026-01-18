@@ -5,7 +5,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: ghcr.io/nirgeier/devops-demo-project:latest
+    image: ghcr.io/pintop9/devops-demo-project:latest
     container_name: devops-demo-app
     ports:
       - "8080:8080"
