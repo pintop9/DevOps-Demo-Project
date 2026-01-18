@@ -132,7 +132,7 @@ chmod +x scripts/*.sh
 ### 1. Clone and Initialize
 
 ```bash
-git clone https://github.com/nirgeier/DevOps-Demo-Project.git
+git clone https://github.com/pintop9/DevOps-Demo-Project.git
 cd DevOps-Demo-Project
 ./scripts/init.sh
 ```
@@ -156,10 +156,10 @@ Visit: http://localhost:8080
 
 ```bash
 # Build the image
-docker build -f docker/Dockerfile -t ghcr.io/nirgeier/devops-demo-project:latest .
+docker build -f docker/Dockerfile -t ghcr.io/pintop9/devops-demo-project:latest .
 
 # Run the container
-docker run -p 8080:8080 ghcr.io/nirgeier/devops-demo-project:latest
+docker run -p 8080:8080 ghcr.io/pintop9/devops-demo-project:latest
 
 # Or use docker-compose
 docker-compose -f docker/docker-compose.yml up -d
@@ -330,7 +330,7 @@ python app/main.py
 # Build multi-platform image
 docker buildx build --platform linux/amd64,linux/arm64 \
   -f docker/Dockerfile \
-  -t ghcr.io/nirgeier/devops-demo-project:latest \
+  -t ghcr.io/pintop9/devops-demo-project:latest \
   --push .
 ```
 
